@@ -1,0 +1,6 @@
+express
+multer
+tesseract.js
+googleapis
+dotenv
+cors 
