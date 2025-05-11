@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Business Card Scanner</title>
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Business Card Scanner</h1>
+    <p>Upload your business card image to extract contact details and save them to Google Sheets.</p>
+    <form action="/scan" method="post" enctype="multipart/form-data">
+      <input type="file" name="image" accept="image/*" required />
+      <button type="submit">Upload & Scan</button>
+    </form>
+  </div>
+</body>
+</html> 
