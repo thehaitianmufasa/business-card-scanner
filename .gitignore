@@ -34,12 +34,10 @@ yarn-error.log*
 .env*
 
 # Google credentials (NEVER commit these)
-*.json
-!package.json
-!tsconfig.json
 **/client_secret*.json
 **/brainsnax*.json
 Business Scanner Google Info.txt
+GOOGLE_VISION_PRIVATE_KEY.txt
 
 # vercel
 .vercel

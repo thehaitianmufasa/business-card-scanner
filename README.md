@@ -2,6 +2,8 @@
 
 Privacy-first business card scanner that saves contacts directly to your own Google Sheets.
 
+**Live Demo:** https://business-card-scanner-five.vercel.app
+
 ## Features
 
 - **Snap & Scan** - Upload business card photos, AI extracts contact details instantly
@@ -69,8 +71,15 @@ Open [http://localhost:3000](http://localhost:3000)
 
 1. Push to GitHub
 2. Import to Vercel
-3. Add environment variables in Vercel dashboard
-4. Update OAuth redirect URI to `https://yourdomain.com/api/auth/callback/google`
+3. Add environment variables in Vercel dashboard:
+   - `NEXTAUTH_URL` - Your Vercel deployment URL
+   - `NEXTAUTH_SECRET` - Random secret (generate with `openssl rand -base64 32`)
+   - `GOOGLE_CLIENT_ID` - OAuth Client ID
+   - `GOOGLE_CLIENT_SECRET` - OAuth Client Secret
+   - `GOOGLE_VISION_CLIENT_EMAIL` - Service account email
+   - `GOOGLE_VISION_PRIVATE_KEY` - Service account private key
+4. Add production redirect URI in Google Cloud Console:
+   `https://your-app.vercel.app/api/auth/callback/google`
 
 ## Project Structure
 
