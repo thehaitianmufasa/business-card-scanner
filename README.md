@@ -1,54 +1,107 @@
 # Business Card Scanner
 
-A web application that scans business cards, extracts information using OCR, and sends the data to Google Sheets.
+Privacy-first business card scanner that saves contacts directly to your own Google Sheets.
 
 ## Features
-- Upload business card images
-- Extracts text using OCR (Tesseract.js)
-- Sends extracted data to Google Sheets
+
+- **Snap & Scan** - Upload business card photos, AI extracts contact details instantly
+- **Your Sheets** - Save contacts to your own Google Sheets (not ours)
+- **Privacy First** - We never store your data; everything goes straight to your Google account
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- Tailwind CSS
+- NextAuth.js v5 (Google OAuth)
+- Google Cloud Vision API
+- Google Sheets API
 
 ## Setup
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/thehaitianmufasa/business-card-scanner.git
-   cd business-card-scanner
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Create a `.env` file with the following variables:
-   ```
-   PORT=3000
-   GOOGLE_SHEETS_ID=your_sheets_id
-   GOOGLE_CLIENT_EMAIL=your_client_email
-   GOOGLE_PRIVATE_KEY=your_private_key
-   ```
+### 1. Google Cloud Console
 
-## Development
+1. Create a new project at [Google Cloud Console](https://console.cloud.google.com)
+2. Enable APIs:
+   - Cloud Vision API
+   - Google Sheets API
+   - Google Drive API
 
-Run the development server:
+3. **OAuth Credentials** (for user sign-in):
+   - Go to APIs & Services > Credentials
+   - Create OAuth 2.0 Client ID (Web application)
+   - Add authorized redirect URI: `http://localhost:3000/api/auth/callback/google`
+   - Copy Client ID and Client Secret
+
+4. **Service Account** (for Vision API):
+   - Go to APIs & Services > Credentials
+   - Create Service Account
+   - Download JSON key
+   - Extract `client_email` and `private_key`
+
+### 2. Environment Variables
+
+Copy `.env.local` and fill in your credentials:
+
 ```bash
-npm run dev
+# NextAuth
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=generate-random-secret  # Run: openssl rand -base64 32
+
+# Google OAuth (for user sign-in + Sheets access)
+GOOGLE_CLIENT_ID=your-oauth-client-id
+GOOGLE_CLIENT_SECRET=your-oauth-client-secret
+
+# Google Vision (service account)
+GOOGLE_VISION_CLIENT_EMAIL=vision@project.iam.gserviceaccount.com
+GOOGLE_VISION_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
 ```
 
-## Deployment on Render
+### 3. Run Development Server
 
-1. Create a new Web Service on Render
-2. Connect your GitHub repository
-3. Configure the following settings:
-   - Build Command: `npm install`
-   - Start Command: `npm start`
-4. Add the following environment variables in Render:
-   - `PORT`
-   - `GOOGLE_SHEETS_ID`
-   - `GOOGLE_CLIENT_EMAIL`
-   - `GOOGLE_PRIVATE_KEY`
+```bash
+bun install
+bun run dev
+```
 
-## Environment Variables
+Open [http://localhost:3000](http://localhost:3000)
 
-- `PORT`: The port number for the server (default: 3000)
-- `GOOGLE_SHEETS_ID`: Your Google Sheets document ID
-- `GOOGLE_CLIENT_EMAIL`: Your Google service account email
-- `GOOGLE_PRIVATE_KEY`: Your Google service account private key 
+## Deployment (Vercel)
+
+1. Push to GitHub
+2. Import to Vercel
+3. Add environment variables in Vercel dashboard
+4. Update OAuth redirect URI to `https://yourdomain.com/api/auth/callback/google`
+
+## Project Structure
+
+```
+app/
+├── page.tsx              # Landing page with sign-in
+├── scan/page.tsx         # Main scanner (protected)
+└── api/
+    ├── auth/[...nextauth]/route.ts
+    ├── scan/route.ts
+    └── sheets/
+        ├── list/route.ts
+        ├── create/route.ts
+        └── append/route.ts
+lib/
+├── auth.ts               # NextAuth config
+├── google/
+│   ├── vision.ts         # Vision API client
+│   └── sheets.ts         # Sheets helpers
+└── ocr/extract.ts        # Contact extraction
+components/
+├── ImageUploader.tsx
+├── ScanResult.tsx
+├── SheetSelector.tsx
+├── SignInButton.tsx
+└── Providers.tsx
+```
+
+## Security Notes
+
+- User tokens stored in encrypted httpOnly cookies (NextAuth handles this)
+- Vision API uses separate service account (isolation)
+- No user data stored on our servers
+- Minimal Google scopes requested
